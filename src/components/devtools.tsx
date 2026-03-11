@@ -28,23 +28,25 @@ export const RHFPanelMeta = memo(function PanelMeta() {
   const { isDirty, isValid, isSubmitting, isSubmitted, submitCount } =
     useFormState({ control })
 
-  const metaJson = useMemo(
-    () =>
-      // replace json stringify because json serialization and deserialization are expensive
-      toJson({
-        isDirty,
-        isValid,
-        isSubmitting,
-        isSubmitted,
-        submitCount,
-      }),
+  const meta = useMemo(
+    () => ({
+      isDirty,
+      isValid,
+      isSubmitting,
+      isSubmitted,
+      submitCount,
+    }),
     [isDirty, isSubmitted, isSubmitting, isValid, submitCount]
   )
 
   return (
     <section>
       <h3 style={styles.sectionTitle}>Meta</h3>
-      <pre style={styles.preBlock}>{metaJson}</pre>
+      <p style={styles.preBlock}>isDirty: {meta.isDirty}</p>
+      <p style={styles.preBlock}>isValid: {meta.isValid}</p>
+      <p style={styles.preBlock}>isSubmitting: {meta.isSubmitting}</p>
+      <p style={styles.preBlock}>isSubmitted: {meta.isSubmitted}</p>
+      <p style={styles.preBlock}>submitCount: {meta.submitCount}</p>
     </section>
   )
 })
