@@ -2,16 +2,16 @@
   "name": "@leesf/rhf-devtool-react",
   "type": "module",
   "version": "0.1.2",
-  "description": "A starter for creating a React component library.",
-  "author": "Author Name <author.name@mail.com>",
+  "description": "My custom react-hook-form devtool",
+  "author": "LeeSF",
   "license": "MIT",
-  "homepage": "https://github.com/author/library#readme",
+  "homepage": "https://github.com/LeeSF03/rhf-devtool/blob/main/README.md",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/author/library.git"
+    "url": "git+https://github.com/LeeSF03/rhf-devtool.git"
   },
   "bugs": {
-    "url": "https://github.com/author/library/issues"
+    "url": "https://github.com/LeeSF03/rhf-devtool/issues"
   },
   "exports": {
     ".": "./dist/index.js",

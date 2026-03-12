@@ -49,6 +49,7 @@ export default App;
 ### Development
 
 - [ ] Add unit, integrated and e2e tests
+- [ ] Add CI/CD automation workflow for publishing
 
 ### Feature
 
