@@ -229,6 +229,7 @@ export const RHFDevToolPanelContent = memo(function RHFDevToolPanelContent({
 })
 
 export type RHFDevToolContext = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<FieldValues, any, FieldValues>
   openPanel: boolean
   toggleOpenPanel: () => void
@@ -254,6 +255,7 @@ export type RHFDevToolProps = {
   title?: string
   defaultOpen?: boolean
   showValues?: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control?: Control<FieldValues, any, FieldValues> | undefined
 }
 
