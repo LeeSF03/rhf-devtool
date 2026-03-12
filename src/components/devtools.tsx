@@ -22,6 +22,7 @@ import {
 import { useFieldNames } from "../hooks/use-fieldnames"
 import { toJson } from "../utils/json"
 import { styles } from "./styles"
+import "./styles.css"
 
 export const RHFPanelMeta = memo(function PanelMeta() {
   const { control } = useDevtool()
@@ -141,8 +142,9 @@ export const RHFDevToolPanelToggleButton = memo(
 
     return (
       <button
+        className="toggle-button"
         type="button"
-        style={{ ...styles.toggleButton, ...style }}
+        style={style}
         onClick={toggleOpenPanel}
         {...props}
       >
@@ -160,7 +162,11 @@ export const RHFDevToolPanelContainer = memo(function RHFDevToolPanelContainer({
   HTMLDivElement
 >) {
   return (
-    <div style={{ ...styles.panelContainer, ...style }} {...props}>
+    <div
+      className="devtool-panel-container"
+      style={{ ...styles.panelContainer, ...style }}
+      {...props}
+    >
       {children}
     </div>
   )

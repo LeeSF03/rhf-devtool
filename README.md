@@ -12,6 +12,10 @@
 
 This is my custom React Component will help you to debug forms when working React Hook Form, and give you more insight about your form's detail.
 
+## Install
+
+`$ npm i -d @leesf/rhf-devtool-react`
+
 ## Quickstart
 
 ```typescript jsx

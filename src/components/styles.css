@@ -1,0 +1,30 @@
+.devtool-panel-container {
+  --primary: #0e101c;
+  --secondary: #bf1650;
+  --light-blue: #516391;
+  --blue: #1e2a4a;
+  --light-pink: #ec5990;
+  --error-pink: #fbecf2;
+  --button-blue: #191d3a;
+  --link: #ff7aa8;
+  --green: #1bda2b;
+}
+
+.toggle-button {
+  background: var(--button-blue);
+  color: white;
+  margin-bottom: 5px;
+  border: 2px solid var(--light-blue);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.toggle-button:hover {
+  background: var(--light-blue);
+}
