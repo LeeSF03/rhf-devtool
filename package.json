@@ -32,7 +32,7 @@
     "play": "vite",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
-    "release": "bumpp && bun publish",
+    "release": "bumpp && pnpm publish",
     "prepublishOnly": "bun run build"
   },
   "peerDependencies": {
