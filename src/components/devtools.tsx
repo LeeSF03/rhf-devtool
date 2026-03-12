@@ -8,18 +8,18 @@ import {
   useContext,
   useMemo,
   useState,
-  useSyncExternalStore,
 } from "react"
 
 import {
-  type Control,
   type FieldValues,
+  UseFormReturn,
   useController,
   useFormContext,
   useFormState,
   useWatch,
 } from "react-hook-form"
 
+import { useFieldNames } from "../hooks/use-fieldnames"
 import { toJson } from "../utils/json"
 import { styles } from "./styles"
 
@@ -54,7 +54,6 @@ export const RHFPanelMeta = memo(function PanelMeta() {
 export const RHFValuesSnapshot = memo(function ValuesSnapshot() {
   const { control } = useDevtool()
   const values = useWatch({ control })
-  // replace json stringify because json serialization and deserialization are expensive
   const valuesJson = useMemo(() => toJson(values), [values])
 
   return (
@@ -103,37 +102,20 @@ export const RHFFieldStateRow = memo(function FieldStateRow({
 })
 
 export const RHFFieldStateList = memo(function FieldStateList() {
-  const { getValues } = useFormContext()
-  const { control } = useDevtool()
-  const fieldNames = useSyncExternalStore(
-    (callback) => {
-      const sub = control._subjects.state.subscribe({
-        next: () => {
-          control._removeUnmounted()
-          callback()
-        },
-      })
-      return () => sub.unsubscribe()
-    },
-    () => control._names.mount
-  )
-
-  // Don't memoize this as fieldNames (control._names.mount) reference is stable and won't reevaluate useMemoed filteredFieldNames when field states change. We want to reflect new fields as they are added or removed.
-  const filteredFieldNames = [...fieldNames].filter(
-    (n) => getValues(n) != undefined
-  )
+  const { control, getValues } = useDevtool()
+  const fieldNames = useFieldNames({ control, getValues })
 
   return (
     <section>
       <details open>
         <summary style={styles.stateListSummary}>
-          Field States ({filteredFieldNames.length})
+          Field States ({fieldNames.length})
         </summary>
         <div style={styles.stateList}>
-          {filteredFieldNames.length === 0 ? (
+          {fieldNames.length === 0 ? (
             <p style={styles.emptyNotice}>No field states available yet.</p>
           ) : (
-            filteredFieldNames.map((name) => (
+            fieldNames.map((name) => (
               <RHFFieldStateRow key={name} name={name} />
             ))
           )}
@@ -229,11 +211,9 @@ export const RHFDevToolPanelContent = memo(function RHFDevToolPanelContent({
 })
 
 export type RHFDevToolContext = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: Control<FieldValues, any, FieldValues>
   openPanel: boolean
   toggleOpenPanel: () => void
-}
+} & UseFormReturn<FieldValues>
 
 export const DevtoolContext = createContext<RHFDevToolContext | null>(null)
 
@@ -243,52 +223,46 @@ export const useDevtool = () => {
     throw new Error(
       "useDevtoolControl must be used within a DevtoolContext.Provider"
     )
-  const { control, openPanel, toggleOpenPanel } = context
+  const { control, openPanel, toggleOpenPanel, ...methods } = context
 
   return useMemo(
-    () => ({ control, openPanel, toggleOpenPanel }),
-    [control, openPanel, toggleOpenPanel]
+    () => ({ control, openPanel, toggleOpenPanel, ...methods }),
+    [control, openPanel, toggleOpenPanel, methods]
   )
-}
-
-export type RHFDevToolProps = {
-  title?: string
-  defaultOpen?: boolean
-  showValues?: boolean
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control?: Control<FieldValues, any, FieldValues> | undefined
 }
 
 export const DevtoolProvider = memo(function DevtoolProvider({
   defaultOpen = false,
-  control,
+  methods,
   children,
-}: PropsWithChildren<RHFDevToolProps>) {
+}: PropsWithChildren<{
+  defaultOpen?: boolean
+  // for some reason, ```undefined``` needs to be explicitly defined to prevent typecheck error
+  methods?: UseFormReturn<FieldValues> | undefined
+}>) {
   const [_open, _setOpen] = useState(defaultOpen)
-  const defaultControl = useFormContext<FieldValues>().control
+  const defaultMethods = useFormContext()
+  const _methods = methods ?? defaultMethods
 
-  const _control = useMemo(
-    () => control ?? defaultControl,
-    [control, defaultControl]
-  )
   const _toggleOpenPanel = useCallback(
     () => _setOpen((previous) => !previous),
     [_setOpen]
   )
 
-  const value = useMemo(
-    () => ({
-      control: _control,
-      openPanel: _open,
-      toggleOpenPanel: _toggleOpenPanel,
-    }),
-    [_control, _open, _toggleOpenPanel]
-  )
-
-  if (!control && !defaultControl)
+  if (!_methods)
     throw new Error(
-      "RHFDevTool requires a control prop or a parent FormProvider"
+      "RHFDevToolProvider requires to be in a FormProvider or passed in object returned from useForm as props"
     )
+
+  const value = useMemo(
+    () =>
+      ({
+        openPanel: _open,
+        toggleOpenPanel: _toggleOpenPanel,
+        ..._methods,
+      }) satisfies RHFDevToolContext,
+    [_methods, _open, _toggleOpenPanel]
+  )
 
   return (
     <DevtoolContext.Provider value={value}>{children}</DevtoolContext.Provider>

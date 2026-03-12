@@ -16,18 +16,20 @@ This is my custom React Component will help you to debug forms when working Reac
 
 ```typescript jsx
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { DevTool } from '@leesf/rhf-devtool-react';
 import './App.css';
 
+// using useForm
 const App = () => {
-  const { register, control, handleSubmit } = useForm({
+  const methods = useForm({
     mode: 'onChange',
   });
+  const { register, control, handleSubmit } = methods
 
   return (
     <>
-      <DevTool control={control} placement="top-left" />
+      <DevTool {...methods} />
 
       <form onSubmit={handleSubmit((d) => console.log(d))}>
         <h1>React Hook Form DevTools</h1>
@@ -41,7 +43,28 @@ const App = () => {
   );
 };
 
-export default App;
+// or using FormProvider
+const App = () => {
+  const methods = useForm({
+    mode: 'onChange',
+  });
+  const { register, control, handleSubmit } = methods
+
+  return (
+    <FormProvider {...methods}>
+      <DevTool />
+      <form onSubmit={handleSubmit((d) => console.log(d))}>
+        <h1>React Hook Form DevTools</h1>
+
+        <label>Test</label>
+        <input name="test" ref={register} />
+
+        <input type="submit" />
+      </form>
+    <FormProvider>
+  );
+};
+
 ```
 
 ## Todo:
@@ -51,7 +74,13 @@ export default App;
 - [ ] Add unit, integrated and e2e tests
 - [ ] Add CI/CD automation workflow for publishing
 
+### Doc
+
+- [ ] Add acknowledgements (react-hook-form, tsdown)
+
 ### Feature
 
 - [ ] Add devtool for react native rozenite plugin
+- [ ] Add position method
 - [ ] Add toggle to expand all field section
+- [ ] Export custom hooks for other customizability
