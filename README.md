@@ -17,7 +17,7 @@ This is my custom React Component will help you to debug forms when working Reac
 ```typescript jsx
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { DevTool } from 'rhf-devtool/react';
+import { DevTool } from '@leesf/rhf-devtool-react';
 import './App.css';
 
 const App = () => {
