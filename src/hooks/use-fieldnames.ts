@@ -8,11 +8,11 @@ export const useFieldNames = <T extends FieldValues>({
 }: {
   control: UseFormReturn<T>["control"]
   getValues: UseFormReturn<T>["getValues"]
-}) =>
-  useSyncExternalStore(
+}) => {
+  const fieldNames = useSyncExternalStore(
     (callback) => {
       const sub = control._subjects.state.subscribe({
-        next: () => {
+        next: (/** can used these with rozenite plugin to send data to rozenite { name, values, type } */) => {
           // check if the operation below is needed
           // check if name (from argument { name }) is in control._names.array, if it is trigger the callback
           control._removeUnmounted()
@@ -21,8 +21,8 @@ export const useFieldNames = <T extends FieldValues>({
       })
       return () => sub.unsubscribe()
     },
-    () =>
-      [...control._names.mount].filter(
-        (n) => getValues(n as Path<T>) != undefined
-      )
+    () => control._names.mount
   )
+
+  return [...fieldNames].filter((n) => getValues(n as Path<T>) != undefined)
+}

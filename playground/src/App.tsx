@@ -348,7 +348,11 @@ function App() {
           <section className="card">
             <div className="array-header">
               <h2>Links (Field Array + Nested Object)</h2>
-              <button type="button" onClick={() => append(defaultLink())}>
+              <button
+                className="btn"
+                type="button"
+                onClick={() => append(defaultLink())}
+              >
                 Add link
               </button>
             </div>
@@ -400,7 +404,11 @@ function App() {
                   Primary link
                 </label>
 
-                <button type="button" onClick={() => remove(index)}>
+                <button
+                  className="btn"
+                  type="button"
+                  onClick={() => remove(index)}
+                >
                   Remove
                 </button>
               </article>
@@ -408,10 +416,11 @@ function App() {
           </section>
 
           <section className="actions">
-            <button type="submit" disabled={isSubmitting}>
+            <button className="btn" type="submit" disabled={isSubmitting}>
               Submit
             </button>
             <button
+              className="btn"
               type="button"
               onClick={() => reset()}
               disabled={isSubmitting}
