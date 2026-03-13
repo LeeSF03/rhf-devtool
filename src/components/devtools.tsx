@@ -62,9 +62,9 @@ export const RHFPanelMeta = memo(function PanelMeta() {
         </span>
       </p>
       <p className="meta-row">
-        isSubmitting:{" "}
-        <span style={{ color: !meta.isSubmitting ? "#bf1650" : "#1bda2b" }}>
-          {String(meta.isSubmitting)}
+        isSubmitted:{" "}
+        <span style={{ color: !meta.isSubmitted ? "#bf1650" : "#1bda2b" }}>
+          {String(meta.isSubmitted)}
         </span>
       </p>
       <p className="meta-row">
