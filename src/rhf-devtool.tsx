@@ -11,18 +11,15 @@ import {
   RHFDevToolPanelToggleButton,
   RHFFieldStateList,
   RHFPanelMeta,
-  RHFValuesSnapshot,
 } from "./components/devtools"
 
 const RHFDevTool = memo(function RHFDevTool({
   defaultOpen = false,
   title = "Form Debug",
-  showValues,
   methods,
 }: {
   defaultOpen?: boolean
   title?: string
-  showValues?: boolean
   methods?: UseFormReturn<FieldValues>
 }) {
   return (
@@ -32,7 +29,6 @@ const RHFDevTool = memo(function RHFDevTool({
         <RHFDevToolPanel>
           <RHFDevToolPanelTitle>{title}</RHFDevToolPanelTitle>
           <RHFDevToolPanelContent>
-            {showValues ? <RHFValuesSnapshot /> : null}
             <RHFFieldStateList />
             <RHFPanelMeta />
           </RHFDevToolPanelContent>

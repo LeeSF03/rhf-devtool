@@ -11,17 +11,17 @@ import {
 } from "react"
 
 import {
+  Field,
+  FieldRefs,
   type FieldValues,
   UseFormReturn,
+  get,
   useController,
   useFormContext,
   useFormState,
-  useWatch,
 } from "react-hook-form"
 
 import { useFieldNames } from "../hooks/use-fieldnames"
-import { toJson } from "../utils/json"
-import { styles } from "./styles"
 import "./styles.css"
 
 export const RHFPanelMeta = memo(function PanelMeta() {
@@ -41,26 +41,38 @@ export const RHFPanelMeta = memo(function PanelMeta() {
   )
 
   return (
-    <section>
-      <h3 style={styles.sectionTitle}>Meta</h3>
-      <p style={styles.preBlock}>isDirty: {meta.isDirty}</p>
-      <p style={styles.preBlock}>isValid: {meta.isValid}</p>
-      <p style={styles.preBlock}>isSubmitting: {meta.isSubmitting}</p>
-      <p style={styles.preBlock}>isSubmitted: {meta.isSubmitted}</p>
-      <p style={styles.preBlock}>submitCount: {meta.submitCount}</p>
-    </section>
-  )
-})
-
-export const RHFValuesSnapshot = memo(function ValuesSnapshot() {
-  const { control } = useDevtool()
-  const values = useWatch({ control })
-  const valuesJson = useMemo(() => toJson(values), [values])
-
-  return (
-    <section>
-      <h3 style={styles.sectionTitle}>Values</h3>
-      <pre style={styles.preBlock}>{valuesJson}</pre>
+    <section className="meta-section">
+      <h3 className="meta-title">Meta</h3>
+      <p className="meta-row">
+        isDirty:{" "}
+        <span style={{ color: !meta.isDirty ? "#bf1650" : "#1bda2b" }}>
+          {String(meta.isDirty)}
+        </span>
+      </p>
+      <p className="meta-row">
+        isValid:{" "}
+        <span style={{ color: !meta.isValid ? "#bf1650" : "#1bda2b" }}>
+          {String(meta.isValid)}
+        </span>
+      </p>
+      <p className="meta-row">
+        isSubmitting:{" "}
+        <span style={{ color: !meta.isSubmitting ? "#bf1650" : "#1bda2b" }}>
+          {String(meta.isSubmitting)}
+        </span>
+      </p>
+      <p className="meta-row">
+        isSubmitting:{" "}
+        <span style={{ color: !meta.isSubmitting ? "#bf1650" : "#1bda2b" }}>
+          {String(meta.isSubmitting)}
+        </span>
+      </p>
+      <p className="meta-row">
+        submitCount:{" "}
+        <span style={{ color: !meta.submitCount ? "#bf1650" : "#1bda2b" }}>
+          {meta.submitCount}
+        </span>
+      </p>
     </section>
   )
 })
@@ -73,11 +85,12 @@ export const RHFFieldStateRow = memo(function FieldStateRow({
   const { control } = useDevtool()
   const {
     field: { value },
-    fieldState: { error, isTouched, isDirty, invalid },
+    fieldState: { error, isDirty, isTouched, invalid },
   } = useController({ control, name })
 
   const info = useMemo(() => {
     const hasError = error !== undefined && error !== null
+    const internalField = get(control._fields, name) as Field | undefined
 
     return {
       value,
@@ -85,18 +98,74 @@ export const RHFFieldStateRow = memo(function FieldStateRow({
       isDirty,
       isTouched,
       isValid: !invalid,
+      ref: internalField?._f.ref,
     }
-  }, [error, invalid, isDirty, isTouched, value])
+  }, [error, invalid, isDirty, isTouched, value, control._fields, name])
 
   return (
-    <details style={styles.fieldRow}>
-      <summary style={styles.fieldRowSummary}>{name}</summary>
-      <div style={styles.fieldRowBodyContainer}>
-        <p style={styles.fieldRowBody}>value: {info.value}</p>
-        <p style={styles.fieldRowBody}>error: {info.error?.message}</p>
-        <p style={styles.fieldRowBody}>isDirty: {info.isDirty}</p>
-        <p style={styles.fieldRowBody}>isTouched: {info.isTouched}</p>
-        <p style={styles.fieldRowBody}>isValid: {info.isValid}</p>
+    <details className="field-row">
+      <summary className="field-row-summary">
+        {name}
+        <button
+          className="inspect-button"
+          onClick={() => {
+            if (info.ref && info.ref?.scrollIntoView) {
+              info.ref.scrollIntoView({ behavior: "smooth", block: "center" })
+
+              // Remove the class if it exists to allow retrigger
+              info.ref.classList?.remove("flash-outline")
+              // Force reflow to reset animation
+              void info.ref.offsetWidth
+              // Add the class to start animation
+              info.ref.classList?.add("flash-outline")
+
+              // Remove it after animation ends
+              const handleAnimationEnd = () => {
+                if (!info.ref) return
+                info.ref.classList?.remove("flash-outline")
+                info.ref.removeEventListener?.(
+                  "animationend",
+                  handleAnimationEnd
+                )
+              }
+              info.ref.addEventListener?.("animationend", handleAnimationEnd)
+            }
+          }}
+        >
+          Inspect
+        </button>
+      </summary>
+      <div className="field-row-body-container">
+        <p className="field-row-body">
+          value:{" "}
+          <span style={{ color: info.error ? "#bf1650" : "#1bda2b" }}>
+            {info.value}
+          </span>
+        </p>
+        <p className="field-row-body">
+          error:{" "}
+          <span style={{ color: info.error ? "#bf1650" : "inherit" }}>
+            {info.error?.message}
+          </span>
+        </p>
+        <p className="field-row-body">
+          isDirty:{" "}
+          <span style={{ color: !info.isDirty ? "#bf1650" : "#1bda2b" }}>
+            {String(info.isDirty)}
+          </span>
+        </p>
+        <p className="field-row-body">
+          isTouched:{" "}
+          <span style={{ color: !info.isTouched ? "#bf1650" : "#1bda2b" }}>
+            {String(info.isTouched)}
+          </span>
+        </p>
+        <p className="field-row-body">
+          isValid:{" "}
+          <span style={{ color: !info.isValid ? "#bf1650" : "#1bda2b" }}>
+            {String(info.isValid)}
+          </span>
+        </p>
       </div>
     </details>
   )
@@ -109,12 +178,12 @@ export const RHFFieldStateList = memo(function FieldStateList() {
   return (
     <section>
       <details open>
-        <summary style={styles.stateListSummary}>
+        <summary className="state-list-summary">
           Field States ({fieldNames.length})
         </summary>
-        <div style={styles.stateList}>
+        <div className="state-list">
           {fieldNames.length === 0 ? (
-            <p style={styles.emptyNotice}>No field states available yet.</p>
+            <p className="empty-notice">No field states available yet.</p>
           ) : (
             fieldNames.map((name) => (
               <RHFFieldStateRow key={name} name={name} />
@@ -124,6 +193,22 @@ export const RHFFieldStateList = memo(function FieldStateList() {
       </details>
     </section>
   )
+})
+
+export const RHFFieldStateScopedList = memo(function RHFFieldStateScopedList({
+  fields,
+}: {
+  fields: FieldRefs
+}) {
+  const { control } = useDevtool()
+  console.log("fields", Object.entries(control._fields))
+  return Object.entries(fields).map(([name, value]) => {
+    if (!value?._f) {
+      const _fields = value as FieldRefs
+      return <RHFFieldStateScopedList fields={_fields} />
+    }
+    return <RHFFieldStateRow key={name} name={name} />
+  })
 })
 
 export const RHFDevToolPanelToggleButton = memo(
@@ -162,11 +247,7 @@ export const RHFDevToolPanelContainer = memo(function RHFDevToolPanelContainer({
   HTMLDivElement
 >) {
   return (
-    <div
-      className="devtool-panel-container"
-      style={{ ...styles.panelContainer, ...style }}
-      {...props}
-    >
+    <div className="devtool-panel-container" style={style} {...props}>
       {children}
     </div>
   )
@@ -180,7 +261,7 @@ export const RHFDevToolPanel = memo(function RHFDevToolPanel({
   const { openPanel } = useDevtool()
   if (!openPanel) return null
   return (
-    <section style={{ ...styles.panel, ...style }} {...props}>
+    <section className="panel" style={style} {...props}>
       {children}
     </section>
   )
@@ -195,7 +276,7 @@ export const RHFDevToolPanelTitle = memo(function RHFDevToolPanelTitle({
   HTMLHeadingElement
 >) {
   return (
-    <h2 style={{ ...styles.panelTitle, ...style }} {...props}>
+    <h2 className="panel-title" style={style} {...props}>
       {children}
     </h2>
   )
@@ -210,7 +291,7 @@ export const RHFDevToolPanelContent = memo(function RHFDevToolPanelContent({
   HTMLDivElement
 >) {
   return (
-    <div style={{ ...styles.panelContent, ...style }} {...props}>
+    <div className="panel-content" style={style} {...props}>
       {children}
     </div>
   )
