@@ -8,6 +8,11 @@
   --button-blue: #191d3a;
   --link: #ff7aa8;
   --green: #1bda2b;
+
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 50;
 }
 
 .toggle-button {
@@ -15,8 +20,7 @@
   color: white;
   margin-bottom: 5px;
   border: 2px solid var(--light-blue);
-  border-radius: 6px;
-  padding: 6px 14px;
+  padding: 14px;
   font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -27,4 +31,127 @@
 
 .toggle-button:hover {
   background: var(--light-blue);
+}
+
+.field-row {
+  border: 1px solid var(--light-pink);
+  padding: 0.5rem;
+}
+
+.field-row-summary {
+  align-content: center;
+  cursor: pointer;
+  font-size: 15px;
+  letter-spacing: 1px;
+  font-weight: 500;
+  list-style: disclosure-closed inside;
+}
+
+.inspect-button {
+  background: var(--button-blue);
+  color: white;
+  margin-bottom: 5px;
+  margin-left: 10px;
+  border: 2px solid var(--light-blue);
+  padding: 0.25rem;
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.inspect-button:hover {
+  background: var(--light-blue);
+}
+
+.field-row-body-container {
+  margin: 0;
+  padding: 0.5rem;
+}
+
+.field-row-body {
+  margin: 0;
+  color: white;
+  overflow: auto;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.state-list-summary {
+  margin: 0;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.flash-outline {
+  box-shadow: 0 0 0 0px rgba(226, 89, 144, 0.9);
+  animation: flashFade 800ms ease-out forwards;
+}
+
+.panel {
+  width: min(92vw, 30rem);
+  max-height: 70vh;
+  overflow: auto;
+  border: 1px solid var(--light-pink);
+  background: var(--blue);
+  color: white;
+  padding: 0.75rem;
+  font-size: 0.75rem;
+  box-shadow: 0 10px 20px var(--primary);
+}
+
+.panel-title {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.panel-content {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.meta-title {
+  margin: 0 0 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.meta-section {
+  margin: 0;
+  padding: 0.5rem;
+  border: 1px solid var(--light-pink);
+}
+
+.meta-row {
+  color: white;
+  overflow: auto;
+  font-size: 15px;
+}
+
+.state-list {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.empty-notice {
+  margin: 0;
+  padding: 0.5rem;
+  border: 1px solid var(--light-pink);
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+@keyframes flashFade {
+  0% {
+    box-shadow: 0 0 0 2px rgba(226, 89, 144, 1);
+  }
+  100% {
+    box-shadow: 0 0 0 2px rgba(226, 89, 144, 0);
+  }
 }
