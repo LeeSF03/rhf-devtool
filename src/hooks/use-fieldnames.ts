@@ -12,8 +12,17 @@ export const useFieldNames = ({
   ])
   useEffect(() => {
     const subscription = control._subjects.state.subscribe({
-      next: ({ name }) => {
-        if (name && control._names.array.has(name))
+      next: ({ name, type }) => {
+        /**
+         * Only update the lists when field arrays are changed
+         * or when a new field name is added
+         * or when type is undefined to ensure the ui is showing the latest state
+         * */
+        if (
+          type === undefined ||
+          (name &&
+            (control._names.array.has(name) || !control._names.mount.has(name)))
+        )
           _setFieldNames([...control._names.mount])
       },
     })
