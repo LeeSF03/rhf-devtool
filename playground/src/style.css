@@ -49,7 +49,6 @@ textarea {
 input,
 select,
 textarea {
-  width: 100%;
   border: 1px solid #d1d5db;
   border-radius: 0.5rem;
   padding: 0.5rem 0.65rem;

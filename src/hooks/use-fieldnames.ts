@@ -1,28 +1,26 @@
-import { useSyncExternalStore } from "react"
+import { useEffect, useState } from "react"
 
-import { FieldValues, Path, UseFormReturn } from "react-hook-form"
+import { UseFormReturn, get } from "react-hook-form"
 
-export const useFieldNames = <T extends FieldValues>({
+export const useFieldNames = ({
   control,
-  getValues,
 }: {
-  control: UseFormReturn<T>["control"]
-  getValues: UseFormReturn<T>["getValues"]
+  control: UseFormReturn["control"]
 }) => {
-  const fieldNames = useSyncExternalStore(
-    (callback) => {
-      const sub = control._subjects.state.subscribe({
-        next: (/** can used these with rozenite plugin to send data to rozenite { name, values, type } */) => {
-          // check if the operation below is needed
-          // check if name (from argument { name }) is in control._names.array, if it is trigger the callback
-          control._removeUnmounted()
-          callback()
-        },
-      })
-      return () => sub.unsubscribe()
-    },
-    () => control._names.mount
-  )
+  const [_fieldNames, _setFieldNames] = useState<string[]>(() => [
+    ...control._names.mount,
+  ])
+  useEffect(() => {
+    const subscription = control._subjects.state.subscribe({
+      next: ({ name }) => {
+        if (name && control._names.array.has(name))
+          _setFieldNames([...control._names.mount])
+      },
+    })
+    return subscription.unsubscribe
+  }, [control, _setFieldNames])
 
-  return [...fieldNames].filter((n) => getValues(n as Path<T>) != undefined)
+  return _fieldNames.filter(
+    (name) => get(control._formValues, name) !== undefined
+  )
 }

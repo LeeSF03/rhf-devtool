@@ -11,10 +11,9 @@ import {
 } from "react"
 
 import {
+  Control,
   Field,
   FieldRefs,
-  type FieldValues,
-  UseFormReturn,
   get,
   useController,
   useFormContext,
@@ -90,7 +89,7 @@ export const RHFFieldStateRow = memo(function FieldStateRow({
 
   const info = useMemo(() => {
     const hasError = error !== undefined && error !== null
-    const internalField = get(control._fields, name) as Field | undefined
+    const field = get(control._fields, name) as Field | undefined
 
     return {
       value,
@@ -98,7 +97,7 @@ export const RHFFieldStateRow = memo(function FieldStateRow({
       isDirty,
       isTouched,
       isValid: !invalid,
-      ref: internalField?._f.ref,
+      ref: field?._f.ref,
     }
   }, [error, invalid, isDirty, isTouched, value, control._fields, name])
 
@@ -136,12 +135,14 @@ export const RHFFieldStateRow = memo(function FieldStateRow({
         </button>
       </summary>
       <div className="field-row-body-container">
-        <p className="field-row-body">
-          value:{" "}
-          <span style={{ color: info.error ? "#bf1650" : "#1bda2b" }}>
-            {info.value}
-          </span>
-        </p>
+        {info.value !== undefined && (
+          <p className="field-row-body">
+            value:{" "}
+            <span style={{ color: info.error ? "#bf1650" : "#1bda2b" }}>
+              {info.value}
+            </span>
+          </p>
+        )}
         <p className="field-row-body">
           error:{" "}
           <span style={{ color: info.error ? "#bf1650" : "inherit" }}>
@@ -172,8 +173,8 @@ export const RHFFieldStateRow = memo(function FieldStateRow({
 })
 
 export const RHFFieldStateList = memo(function FieldStateList() {
-  const { control, getValues } = useDevtool()
-  const fieldNames = useFieldNames({ control, getValues })
+  const { control } = useDevtool()
+  const fieldNames = useFieldNames({ control })
 
   return (
     <section>
@@ -300,43 +301,47 @@ export const RHFDevToolPanelContent = memo(function RHFDevToolPanelContent({
 export type RHFDevToolContext = {
   openPanel: boolean
   toggleOpenPanel: () => void
-} & UseFormReturn<FieldValues>
+  control: Control
+}
 
 export const DevtoolContext = createContext<RHFDevToolContext | null>(null)
 
-export const useDevtool = () => {
-  const context = useContext(DevtoolContext)
-  if (!context)
-    throw new Error(
-      "useDevtoolControl must be used within a DevtoolContext.Provider"
-    )
-  const { control, openPanel, toggleOpenPanel, ...methods } = context
+export function useDevtool() {
+  const ctx = useContext(DevtoolContext)
+  if (!ctx)
+    throw new Error("useDevtoolContext must be used within a DevtoolProvider")
+
+  const { control, openPanel, toggleOpenPanel } = ctx
 
   return useMemo(
-    () => ({ control, openPanel, toggleOpenPanel, ...methods }),
-    [control, openPanel, toggleOpenPanel, methods]
+    () => ({
+      control,
+      openPanel,
+      toggleOpenPanel,
+    }),
+    [control, openPanel, toggleOpenPanel]
   )
 }
 
 export const DevtoolProvider = memo(function DevtoolProvider({
   defaultOpen = false,
-  methods,
   children,
+  control,
 }: PropsWithChildren<{
   defaultOpen?: boolean
   // for some reason, ```undefined``` needs to be explicitly defined to prevent typecheck error
-  methods?: UseFormReturn<FieldValues> | undefined
+  control: Control | undefined
 }>) {
   const [_open, _setOpen] = useState(defaultOpen)
-  const defaultMethods = useFormContext()
-  const _methods = methods ?? defaultMethods
+  const { control: defaultControl } = useFormContext()
+  const _control = control ?? defaultControl
 
   const _toggleOpenPanel = useCallback(
     () => _setOpen((previous) => !previous),
     [_setOpen]
   )
 
-  if (!_methods)
+  if (!_control)
     throw new Error(
       "RHFDevToolProvider requires to be in a FormProvider or passed in object returned from useForm as props"
     )
@@ -346,9 +351,9 @@ export const DevtoolProvider = memo(function DevtoolProvider({
       ({
         openPanel: _open,
         toggleOpenPanel: _toggleOpenPanel,
-        ..._methods,
+        control: _control,
       }) satisfies RHFDevToolContext,
-    [_methods, _open, _toggleOpenPanel]
+    [_control, _open, _toggleOpenPanel]
   )
 
   return (

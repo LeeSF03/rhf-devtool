@@ -1,6 +1,6 @@
 import { memo } from "react"
 
-import type { FieldValues, UseFormReturn } from "react-hook-form"
+import type { Control } from "react-hook-form"
 
 import {
   DevtoolProvider,
@@ -16,14 +16,14 @@ import {
 const RHFDevTool = memo(function RHFDevTool({
   defaultOpen = false,
   title = "Form Debug",
-  methods,
+  control,
 }: {
   defaultOpen?: boolean
   title?: string
-  methods?: UseFormReturn<FieldValues>
+  control?: Control
 }) {
   return (
-    <DevtoolProvider methods={methods} defaultOpen={defaultOpen}>
+    <DevtoolProvider control={control} defaultOpen={defaultOpen}>
       <RHFDevToolPanelContainer>
         <RHFDevToolPanelToggleButton />
         <RHFDevToolPanel>
