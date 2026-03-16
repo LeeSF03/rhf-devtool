@@ -105,34 +105,36 @@ export const RHFFieldStateRow = memo(function FieldStateRow({
     <details className="field-row">
       <summary className="field-row-summary">
         {name}
-        <button
-          className="inspect-button"
-          onClick={() => {
-            if (info.ref && info.ref?.scrollIntoView) {
-              info.ref.scrollIntoView({ behavior: "smooth", block: "center" })
+        {Boolean(info.ref) && (
+          <button
+            className="inspect-button"
+            onClick={() => {
+              if (info.ref?.scrollIntoView) {
+                info.ref.scrollIntoView({ behavior: "smooth", block: "center" })
 
-              // Remove the class if it exists to allow retrigger
-              info.ref.classList?.remove("flash-outline")
-              // Force reflow to reset animation
-              void info.ref.offsetWidth
-              // Add the class to start animation
-              info.ref.classList?.add("flash-outline")
-
-              // Remove it after animation ends
-              const handleAnimationEnd = () => {
-                if (!info.ref) return
+                // Remove the class if it exists to allow retrigger
                 info.ref.classList?.remove("flash-outline")
-                info.ref.removeEventListener?.(
-                  "animationend",
-                  handleAnimationEnd
-                )
+                // Force reflow to reset animation
+                void info.ref.offsetWidth
+                // Add the class to start animation
+                info.ref.classList?.add("flash-outline")
+
+                // Remove it after animation ends
+                const handleAnimationEnd = () => {
+                  if (!info.ref) return
+                  info.ref.classList?.remove("flash-outline")
+                  info.ref.removeEventListener?.(
+                    "animationend",
+                    handleAnimationEnd
+                  )
+                }
+                info.ref.addEventListener?.("animationend", handleAnimationEnd)
               }
-              info.ref.addEventListener?.("animationend", handleAnimationEnd)
-            }
-          }}
-        >
-          Inspect
-        </button>
+            }}
+          >
+            Inspect
+          </button>
+        )}
       </summary>
       <div className="field-row-body-container">
         {info.value !== undefined && (
