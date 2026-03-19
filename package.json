@@ -1,7 +1,7 @@
 {
   "name": "@leesf/rhf-devtool-react",
   "type": "module",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "My custom react-hook-form devtool",
   "author": "LeeSF",
   "license": "MIT",
