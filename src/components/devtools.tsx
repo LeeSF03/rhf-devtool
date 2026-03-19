@@ -331,8 +331,7 @@ export const DevtoolProvider = memo(function DevtoolProvider({
   control,
 }: PropsWithChildren<{
   defaultOpen?: boolean
-  // for some reason, ```undefined``` needs to be explicitly defined to prevent typecheck error
-  control: Control | undefined
+  control?: Control | undefined
 }>) {
   const [_open, _setOpen] = useState(defaultOpen)
   const { control: defaultControl } = useFormContext()

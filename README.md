@@ -26,14 +26,13 @@ import './App.css';
 
 // using useForm
 const App = () => {
-  const methods = useForm({
+  const { register, control, handleSubmit } = useForm({
     mode: 'onChange',
   });
-  const { register, control, handleSubmit } = methods
 
   return (
     <>
-      <DevTool {...methods} />
+      <DevTool control={control} />
 
       <form onSubmit={handleSubmit((d) => console.log(d))}>
         <h1>React Hook Form DevTools</h1>

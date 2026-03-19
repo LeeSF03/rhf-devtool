@@ -27,7 +27,7 @@ export const useFieldNames = ({
       },
     })
     return subscription.unsubscribe
-  }, [control, _setFieldNames])
+  }, [control])
 
   return _fieldNames.filter(
     (name) => get(control._formValues, name) !== undefined

@@ -20,7 +20,7 @@ const RHFDevTool = memo(function RHFDevTool({
 }: {
   defaultOpen?: boolean
   title?: string
-  control?: Control
+  control?: Control | undefined
 }) {
   return (
     <DevtoolProvider control={control} defaultOpen={defaultOpen}>
